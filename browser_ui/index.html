@@ -113,8 +113,7 @@
 
         document.querySelector('#items').addEventListener('keydown', (ev) => {
             if (ev.keyCode === 9) {
-                parseInputJSONcontent();
-                alert("You pressed tab key");
+                parseInputJSONcontent();  // FIXME: Find a better way to convert the inputs automatically.
             }
         })
     </script>

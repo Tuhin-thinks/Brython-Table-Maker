@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Maker</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/brython@3/brython.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/brython@3/brython_stdlib.js"></script>
+</head>
+
+<body onload="brython(1)">
+    <div class="header">
+        <h2>Table Maker</h2>
+        <p>Write your table in JSON format and get table in markdown format.</p>
+    </div>
+
+    <hr>
+    <p>Enter the table contents in JSON format here:</p>
+    <div class="row">
+        <textarea name="items" id="items" cols="30" rows="10"></textarea>
+    </div>
+    <div class="row">
+        <div class="cols-area">
+            <div class="row">
+                <div class="pills-div" id="header">
+                    <span id="pills-container"></span>
+                    <div class="row">
+                        <input type="text" class="col-input">
+                        <button class="btn" title="Add column">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <label for="padding">Padding</label>
+            <input type="text" id="padding">
+        </div>
+
+        <div class="col">
+            <label for="alignment">Alignment</label>
+            <input type="text" id="alignment">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <button id="clear">Clear</button>
+            <button id="convert-md">Submit</button>
+        </div>
+    </div>
+
+
+    <hr>
+    <p>Markdown output:</p>
+    <textarea class="md-viewer" id="md" cols="10" rows="5"></textarea>
+
+    <p>Preview:</p>
+    <div id="md-render"></div>
+
+    <div class="no-display" id="col-names" style="display:none"></div>
+    <div class="no-display" id="items-no-display" style="display: none;"></div>
+    <script>
+        const pillsContainer = document.getElementById('pills-container');
+        const header = document.getElementById('header');
+        const addBtn = document.querySelector('.btn');
+        const colInput = document.querySelector('.col-input');
+        let pills = [];
+
+        // function to add pills(headers) on each input butto click
+        ["click"].forEach(event => {
+            addBtn.addEventListener(event, () => {
+                const colName = colInput.value;
+                if (colName) {
+                    addPill(pillsContainer, colName);
+                    pills.push(colName);
+                    document.getElementById('col-names').innerHTML = pills;
+
+                    colInput.value = "";
+                    colInput.focus();
+                }
+            })
+        })
+
+        // utility function to add a pill to the specified container
+        const addPill = (container, name) => {
+            const pill = document.createElement('span');
+            pill.classList.add('pill');
+            pill.innerHTML = name;
+            container.appendChild(pill);
+        }
+
+        const parseInputJSONcontent = () => {
+            const input = document.getElementById('items').value;
+            const lines = input.trim().split('\n');
+            const parsed_content = lines.map(line => {
+                const cells = line.split(',');
+                cells.forEach((cell, i, arr) => {
+                    arr[i] = `${cell.trim()}`;  // consider every cell as a string
+                });
+                return cells
+            });
+            const json_content = JSON.stringify(parsed_content, null, 2);
+            console.log(json_content);
+            // return json_content;
+            document.querySelector('#items-no-display').innerText = json_content;
+        }
+
+        document.querySelector('#items').addEventListener('keydown', (ev) => {
+            if (ev.keyCode === 9) {
+                parseInputJSONcontent();
+                alert("You pressed tab key");
+            }
+        })
+    </script>
+    <script src="/table_maker/create-md-tables.py" type="text/python"></script>
+
+</body>
+
+</html>

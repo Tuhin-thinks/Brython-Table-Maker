@@ -1,0 +1,8 @@
+
+*.py[cod]
+
+*.idea
+*.vscode
+
+py-js_env
+trash
